@@ -59,7 +59,7 @@ float SpO2Calculator::calculateSpO2()
     // 使用校準公式將 R 轉換為 SpO2
     // 這個公式需要根據實驗數據進行校準
     // 這裡使用一個假設的非線性公式
-    float spO2 = 110.0 - 16.5 * R; // 需要根據實際數據調整
+    float spO2 = 110.0 - 13.5 * R; // 需要根據實際數據調整
 
     // 限制 SpO2 值在合理範圍內
     spO2 = constrain(spO2, 70.0, 100.0);
