@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include "APManager.h"
-#include "WebServerManager.h"
-#include "WebSocketManager.h"
-#include "SensorManager.h"
+#include "network/APManager.h"
+#include "network/WebServerManager.h"
+#include "network/WebSocketManager.h"
+#include "sensor/SensorManager.h"
 
 void setup()
 {

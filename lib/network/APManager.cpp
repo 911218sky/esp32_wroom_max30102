@@ -3,16 +3,17 @@
 // AP Configuration
 const char *ssid = "ESP32-AP";
 const char *password = "12345678";
-const int CHANNEL = 1;           // WiFi channel (1-13)
-const int MAX_CONNECTIONS = 4;   // Maximum number of connections
-const bool HIDE_SSID = false;    // Whether to hide SSID
+const int CHANNEL = 1;           // Range: 1-13
+const int MAX_CONNECTIONS = 4;   // Max clients
+const bool HIDE_SSID = false;    // Hide network
 const int BEACON_INTERVAL = 100; // Beacon interval (ms)
-const int WIFI_RETRY_COUNT = 3;  // Number of retry attempts
+const int WIFI_RETRY_COUNT = 3;  // Setup retries
 
-// Connection monitoring variables
+// Monitoring settings
 static unsigned long lastCheckTime = 0;
-const unsigned long CHECK_INTERVAL = 10000; // Check every 10 seconds
+const unsigned long CHECK_INTERVAL = 10000; // Check interval (ms)
 
+// Handle new client connection
 void onStationConnected(arduino_event_id_t event, arduino_event_info_t info)
 {
     Serial.println("\n=== New device connected to AP! ===");
@@ -29,6 +30,7 @@ void onStationConnected(arduino_event_id_t event, arduino_event_info_t info)
     Serial.println("================================");
 }
 
+// Handle client disconnection
 void onStationDisconnected(arduino_event_id_t event, arduino_event_info_t info)
 {
     Serial.println("\n=== Device disconnected from AP! ===");
@@ -45,6 +47,7 @@ void onStationDisconnected(arduino_event_id_t event, arduino_event_info_t info)
     Serial.println("===================================");
 }
 
+// Display connected clients info
 void checkStationStatus()
 {
     wifi_sta_list_t stationList;
@@ -73,16 +76,15 @@ void checkStationStatus()
     }
 }
 
+// Initialize WiFi Access Point
 void setupAP()
 {
-    // 設置WiFi模式
+    // Set AP mode and power settings
     WiFi.mode(WIFI_AP);
-
-    // 設置WiFi功率和禁用省電模式
     WiFi.setTxPower(WIFI_POWER_19_5dBm);
     esp_wifi_set_ps(WIFI_PS_NONE);
 
-    // 嘗試啟動AP
+    // Start AP with retry mechanism
     int retry = 0;
     while (!WiFi.softAP(ssid, password, CHANNEL, HIDE_SSID, MAX_CONNECTIONS) && retry < WIFI_RETRY_COUNT)
     {
@@ -97,11 +99,11 @@ void setupAP()
         ESP.restart();
     }
 
-    // 註冊事件處理
+    // Set event handlers
     WiFi.onEvent(onStationConnected, ARDUINO_EVENT_WIFI_AP_STACONNECTED);
     WiFi.onEvent(onStationDisconnected, ARDUINO_EVENT_WIFI_AP_STADISCONNECTED);
 
-    // 打印AP信息
+    // Show AP info
     Serial.println("\n=== AP Started Successfully ===");
     Serial.printf("SSID: %s\n", ssid);
     Serial.printf("Password: %s\n", password);
@@ -111,12 +113,14 @@ void setupAP()
     Serial.println("============================");
 }
 
+// Periodic AP maintenance
 void maintainAP()
 {
     if (millis() - lastCheckTime >= CHECK_INTERVAL)
     {
         lastCheckTime = millis();
 
+        // Check connected clients
         int stationCount = WiFi.softAPgetStationNum();
         if (stationCount == 0)
         {
@@ -128,7 +132,7 @@ void maintainAP()
             checkStationStatus();
         }
 
-        // 檢查AP狀態
+        // Verify AP status
         if (WiFi.getMode() != WIFI_AP)
         {
             Serial.println("AP mode lost! Restarting...");

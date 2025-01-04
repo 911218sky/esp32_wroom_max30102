@@ -6,10 +6,15 @@
 #include <ArduinoJson.h>
 #include "SpO2.h"
 #include "HeartRate.h"
-#include "WebSocketManager.h"
+#include "../network/WebSocketManager.h"
 
+// Initialize MAX30102 sensor hardware
 bool initializeSensor();
+
+// Process raw sensor readings and calculate vitals 
 void processSensorData();
+
+// Send processed data via WebSocket
 void sendSensorData();
 
 #endif
