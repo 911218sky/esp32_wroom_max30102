@@ -29,10 +29,9 @@ void processSensorData() {
     // Get raw sensor readings
     long irValue = particleSensor.getIR();
     long redValue = particleSensor.getRed();
-    float temperature = particleSensor.readTemperature();
 
     // Check if finger is placed on sensor
-    if (irValue < 5000 || temperature < 25) {
+    if (irValue < 5000) {
         lastSpO2 = -1;
         lastBPM = -1;
 
@@ -75,6 +74,12 @@ void sendSensorData() {
         }
 
         // Send JSON data
+        String jsonString;
+        serializeJson(doc, jsonString);
+        webSocket.broadcastTXT(jsonString);
+    } else {
+        StaticJsonDocument<100> doc;
+        doc["status"] = "measuring";
         String jsonString;
         serializeJson(doc, jsonString);
         webSocket.broadcastTXT(jsonString);
