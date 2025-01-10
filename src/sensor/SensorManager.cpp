@@ -29,9 +29,10 @@ void processSensorData() {
     // Get raw sensor readings
     long irValue = particleSensor.getIR();
     long redValue = particleSensor.getRed();
+    float temperature = particleSensor.readTemperature();
 
     // Check if finger is placed on sensor
-    if (irValue < 5000) {
+    if (irValue < 5000 || temperature < 25) {
         lastSpO2 = -1;
         lastBPM = -1;
 
