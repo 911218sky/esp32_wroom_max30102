@@ -3,7 +3,7 @@
 // AP Configuration
 const char *ssid = "ESP32-AP";
 const char *password = "12345678";
-const int CHANNEL = 1;           // Range: 1-13
+const int CHANNEL = 11;           // Range: 1-13
 const int MAX_CONNECTIONS = 4;   // Max clients
 const bool HIDE_SSID = false;    // Hide network
 const int BEACON_INTERVAL = 100; // Beacon interval (ms)
